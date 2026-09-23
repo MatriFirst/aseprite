@@ -60,6 +60,12 @@ jobs:
     - name: Compiling
       shell: bash
       run: cd build && ninja
+    - name: Copy OpenSSL DLLs
+      if: ${{ matrix.ui == 'gui' }}
+      shell: bash
+      run: |
+        cp "/c/Program Files/OpenSSL/bin/"lib{crypto,ssl}-3-x64.dll build/bin/
+        dumpbin -nologo -dependents build/bin/aseprite.exe
     - name: Upload Aseprite
       if: ${{ matrix.ui == 'gui' }}
       uses: actions/upload-artifact@v4
@@ -67,6 +73,7 @@ jobs:
         name: aseprite-windows-x64
         path: |
           build/bin/aseprite.exe
+          build/bin/*.dll
           build/bin/data
     - name: Running C++ Tests
       shell: bash
